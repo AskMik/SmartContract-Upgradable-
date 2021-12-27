@@ -2,7 +2,17 @@
 
 pragma solidity ^0.8.6;
 
-contract Proxy {
+/*
+
+  +-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ 
+  |d|o| |g|i|v|e| |y|o|u|r| |c|o|m|m|i|t|s| |l|i|k|e| |t|h|i|s| 
+  +-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ 
+*/
+// token 2 as know as proxy = Token2AKAProxy
+// token2 smart contract will be the contract with which user will interect
+
+contract Token2AKAProxy {
+  //expla what are these two variables for where did you find them from & how to get them. etc.. 
   bytes32 private constant _ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
   bytes32 private constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
 

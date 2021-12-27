@@ -13,3 +13,11 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
+
+
+Zubair : updates
+
+Note : 
+Try to reduce Code dont over code first thing it'll get messy 2nd not good practice.
+You can check how less code i've wrote in Token1-test.js
+

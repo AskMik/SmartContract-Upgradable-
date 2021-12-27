@@ -14,7 +14,7 @@ uint supplyOfTokens = 10000 * 10 ** 18;
 
     function initialize() public initializer {
         __ERC20_init("Token1" , "T1");
-         __Ownable_init();
+        __Ownable_init();
         __UUPSUpgradeable_init();
         _mint(msg.sender, supplyOfTokens);
     }
