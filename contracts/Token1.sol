@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 
 pragma solidity >0.8.0;
+import "hardhat/console.sol";
 
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -10,21 +11,24 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 contract Token1 is   Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable{ 
 
-uint supplyOfTokens = 10000 * 10 ** 18;
+uint supplyOfTokens;
+address _owner;
 
-    function initialize() public initializer {
+    function initialize(address owner_) public initializer {
         __ERC20_init("Token1" , "T1");
         __Ownable_init();
         __UUPSUpgradeable_init();
-        _mint(msg.sender, supplyOfTokens);
+        supplyOfTokens = 10000 * 10 ** 18;
+        _owner = owner_;
+        _mint(_owner, supplyOfTokens);
     }
 
 
-    constructor() initializer{}
+    // constructor() initializer{}
 
-    function buy(uint amountToBeBought) public payable returns(bool){
-        require(msg.value >= amountToBeBought);
-        transfer(msg.sender, amountToBeBought);
+    function buy(uint _pay) public payable returns(bool){
+        // require(msg.value >= _pay);
+        transferFrom(_owner,msg.sender,_pay);
         return true;
     }
 
