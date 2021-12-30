@@ -9,13 +9,13 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract Token1 is   Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable{ 
-    
+contract Token2 is   Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable{ 
 
 uint supplyOfTokens;
 uint tokensLeft;
 address _owner;
-address payable contractAddress;
+address payable UpgradedTokenAddress;
+
 
 
 
@@ -25,15 +25,15 @@ address payable contractAddress;
         __UUPSUpgradeable_init();
         supplyOfTokens = 10000 * 10 ** 18;
         _owner = owner_;
-        contractAddress = payable(address(this));
+        UpgradedTokenAddress = payable(address(this));
         _mint(_owner, supplyOfTokens);
     }
 
 
-    // constructor() initializer{}
+    
 
     function buy(address _address, uint tokensQuantity) public payable returns(bool){
-        //require(msg.value >= tokensQuantity, "not enough tokens");
+        require(msg.value >= tokensQuantity, "not enough tokens");
         transfer(_address, tokensQuantity);
         tokensLeft = supplyOfTokens - tokensQuantity;
         return true;

@@ -1,59 +1,50 @@
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.6;
-
-/*
-
-  +-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ 
-  |d|o| |g|i|v|e| |y|o|u|r| |c|o|m|m|i|t|s| |l|i|k|e| |t|h|i|s| 
-  +-+-+ +-+-+-+-+ +-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+ +-+-+-+-+ 
-*/
-// token 2 as know as proxy = Token2AKAProxy
-// token2 smart contract will be the contract with which user will interect
+pragma solidity  >0.8.1;
 
 contract Token2AKAProxy {
-  //expla what are these two variables for where did you find them from & how to get them. etc.. 
-  bytes32 private constant _ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
-  bytes32 private constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
-
-  constructor() {
-    bytes32 slot = _ADMIN_SLOT;
-    address _admin = msg.sender;
-    assembly {
-      sstore(slot, _admin)
+    // Code position in storage is keccak256("PROXIABLE") = "0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7"
+    constructor(bytes memory constructData, address contractLogic) {
+        // save the code address
+        assembly { // solium-disable-line
+            sstore(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7, contractLogic)
+        }
+        (bool success, bytes memory result ) = contractLogic.delegatecall(constructData); // solium-disable-line
+        require(success, "Construction failed");
     }
-  }
 
-  function admin() public view returns (address adm) {
-    bytes32 slot = _ADMIN_SLOT;
-    assembly {
-      adm := sload(slot)
+    fallback() external payable {
+        assembly { // solium-disable-line
+            let contractLogic := sload(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7)
+            calldatacopy(0x0, 0x0, calldatasize())
+            let success := delegatecall(sub(gas(), 10000), contractLogic, 0x0, calldatasize(), 0, 0)
+            let retSz := returndatasize()
+            returndatacopy(0, 0, retSz)
+            switch success
+            case 0 {
+                revert(0, retSz)
+            }
+            default {
+                return(0, retSz)
+            }
+        }
     }
-  }
-
-  function implementation() public view returns (address impl) {
-    bytes32 slot = _IMPLEMENTATION_SLOT;
-    assembly {
-      impl := sload(slot)
-    }
-  }
-
-  function upgrade(address newImplementation) external {
-    require(msg.sender == admin(), 'admin only');
-    bytes32 slot = _IMPLEMENTATION_SLOT;
-    assembly {
-      sstore(slot, newImplementation)
-    }
-  }
-
-
-  fallback() external payable {
-    assembly {
-      let _target := sload(_IMPLEMENTATION_SLOT)
-      calldatacopy(0x0, 0x0, calldatasize())
-      let result := delegatecall(gas(), _target, 0x0, calldatasize(), 0x0, 0)
-      returndatacopy(0x0, 0x0, returndatasize())
-      switch result case 0 {revert(0, 0)} default {return (0, returndatasize())}
-    }
-  }
 }
+
+contract Proxiable {
+    // Code position in storage is keccak256("PROXIABLE") = "0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7"
+
+    function updateCodeAddress(address newAddress) internal {
+        require(
+            bytes32(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7) == Proxiable(newAddress).proxiableUUID(),
+            "Not compatible"
+        );
+        assembly { // solium-disable-line
+            sstore(0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7, newAddress)
+        }
+    }
+
+    function proxiableUUID() public pure returns (bytes32) {
+        return 0xc5f16f0fcc639fa48a6947836d9850f504798523bf8c9a3a87d5876cf622bcf7;
+    }
+} 
