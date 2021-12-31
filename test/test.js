@@ -116,7 +116,7 @@ describe("Token & it's Proxy flow test : ", () => {
 
   
     //test9
-   it ("should deploy proxy contract: ", async() => {
+   it ("should upgrade the Implementation address of Proxy contract to token2 contract address: ", async() => {
        await proxy.upgrade(token2.address);
        //have to convert the address to bytes32 cause logic contract(token2) has address converted in bytes32
        expect(await proxy.implementation()).to.equal((token2.address).toString(32));
@@ -124,7 +124,9 @@ describe("Token & it's Proxy flow test : ", () => {
 
    
    //test10
-   it("making variable of proxy contract with logic(implementation)", async() =>{
+   it("creating a new contract instance of proxy contract with logic(implementation)", async() =>{
+       //Making instance "token2_via_proxy" with new Contract factory address.attach()
+       //This will take one argument which is the address of the deployed contract.
        token2_via_proxy = await Token2.attach(token1.address);
        proxyupdate = token2_via_proxy.address;
        console.log("==================================================");
