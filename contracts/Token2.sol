@@ -14,7 +14,7 @@ contract Token2 is   Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUp
 uint supplyOfTokens;
 uint tokensLeft;
 address _owner;
-address payable UpgradedTokenAddress;
+address payable contractAddress;
 
 
 
@@ -25,7 +25,7 @@ address payable UpgradedTokenAddress;
         __UUPSUpgradeable_init();
         supplyOfTokens = 10000 * 10 ** 18;
         _owner = owner_;
-        UpgradedTokenAddress = payable(address(this));
+        contractAddress = payable(address(this));
         _mint(_owner, supplyOfTokens);
     }
 
@@ -33,7 +33,7 @@ address payable UpgradedTokenAddress;
     
 
     function buy(address _address, uint tokensQuantity) public payable returns(bool){
-        require(msg.value >= tokensQuantity, "not enough tokens");
+        //require(msg.value >= tokensQuantity, "not enough tokens");
         transfer(_address, tokensQuantity);
         tokensLeft = supplyOfTokens - tokensQuantity;
         return true;
@@ -45,6 +45,12 @@ address payable UpgradedTokenAddress;
 
     function burn(uint burningTokensAmount) public {
         _burn(msg.sender, burningTokensAmount);
+    }
+
+
+    //New function for upgraded version of the contract
+    function LeftTokens() public view returns(uint){
+        return tokensLeft;
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
