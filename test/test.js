@@ -143,6 +143,18 @@ describe("Token & it's Proxy flow test : ", () => {
 
    })
 
+    
+   //testing the new function of the upgraded contract
+   //test13
+   it("new function should work: ", async() => {
+       const lt  = BigNumber.from('10000000000000000000000').sub(BigNumber.from("20"));
+       expect(await token2_via_proxy.LeftTokens()).to.equal(lt);
+       console.log("==================================================");
+       console.log("Left Tokens : ", lt);
+       console.log("==================================================");
+   })
+   
+
    
 
 //All Done!
