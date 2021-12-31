@@ -12,7 +12,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 contract Token1 is   Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable{ 
     
 
-uint supplyOfTokens;
+uint public supplyOfTokens;
 uint tokensLeft;
 address _owner;
 address payable contractAddress;
@@ -32,6 +32,12 @@ address payable contractAddress;
 
     // constructor() initializer{}
 
+    receive() external payable {
+    }
+
+    fallback() external payable {
+    }
+
     function buy(address _address, uint tokensQuantity) public payable returns(bool){
         //require(msg.value >= tokensQuantity, "not enough tokens");
         transfer(_address, tokensQuantity);
@@ -45,6 +51,10 @@ address payable contractAddress;
 
     function burn(uint burningTokensAmount) public {
         _burn(msg.sender, burningTokensAmount);
+    }
+
+    function totalSupplyOfTokens() public view returns(uint){
+        return supplyOfTokens;
     }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}
